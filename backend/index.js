@@ -15,7 +15,7 @@ app.use(cookieParser());
 const PORT= process.env.PORT;
 
 app.use("/api/v1/user",userRoute);
-app.use("api/v1/message",messageRoute);
+app.use("/api/v1/message",messageRoute);
 
 app.listen(PORT, ()=>{
     connectDB();

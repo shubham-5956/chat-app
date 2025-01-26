@@ -1,3 +1,5 @@
+import { Conversation } from "../models/conversationModel.js";
+import { Message } from "../models/messageModel.js";
 
 export const sendMessage = async(req,res)=>{
     try{
@@ -13,9 +15,38 @@ export const sendMessage = async(req,res)=>{
             gotConversation= await Conversation.create({
                 participants:[senderId, receiverId]
             })
-        }
+        };
+
+        const newMessage = await Message.create({
+            senderId,
+            receiverId,
+            message
+        });
+        if(newMessage){
+            gotConversation.messages.push(newMessage._id);
+        };
+
+        await gotConversation.save();
+
+        return res.status(201).json({
+            message:"Successfully deliveres your message"
+        });
 
     }catch(error){
+        console.log(error);
+    }
+};
+
+export const getMessage = async (req,res) => {
+    try {
+        const receiverId= req.params.id;
+        const senderId = req.id
+        const conversation = await Conversation.findOne({
+            participants: {$all : [senderId, receiverId]}
+    }).populate("messages");
+    console.log(conversation);
+
+    } catch (error) {
         console.log(error);
     }
 }
